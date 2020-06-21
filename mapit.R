@@ -22,11 +22,6 @@ ggplot(long_incl, aes(Long,Lat,color=ismurder))+geom_point(alpha=0.1)
 # function to retrieve, stratify and visualize by given code
 
 mapIt<-function(offCode){
-  code_list<<-as.data.frame(code_list)
-  code_name<-code_list$NAME[which(code_list$CODE==offCode)]
-  code_indx<-paste("code: ",code_list$CODE[which(code_list$CODE==offCode)],
-                   ", name: \"",code_name,"\"",
-                   sep="")
   target<-subset(bos_crime,bos_crime$OFFENSE_CODE %in% offCode)
   years<-as.data.frame(table(target$DISTRICT))
   long_incl<-subset(target,target$Lat>"-71")
@@ -70,8 +65,14 @@ mapIt<-function(offCode,s){
   makeMap()
   if(s==1){
       # needs bugfix
-      png(filename='~/../Desktop/plot.png',width= 800, height=500)
-      makeMap()
+      png(filename='~/../Documents/GitHub/crimeviz/plots/plot.png',width= 800, height=500)
+           print({makeMap()})
       dev.off()
     }
 }
+
+# generates spacial plot of crimes designated by specific code
+# and uses lookup index to retrieve name. Includes optional 
+# argument to save to file where 0 = don't save,1 = save
+
+mapIt(801,0) 
