@@ -64,8 +64,9 @@ mapIt<-function(offCode,s){
            caption=attribution)}
   makeMap()
   if(s==1){
-      # needs bugfix
-      png(filename='~/../Documents/GitHub/crimeviz/plots/plot.png',width= 800, height=500)
+      filename<-paste("~/../Documents/Github/crimeviz/plots/",
+                      offCode,".png",sep="")
+      png(filename=filename, width= 800, height=500)
            print({makeMap()})
       dev.off()
     }
@@ -75,4 +76,4 @@ mapIt<-function(offCode,s){
 # and uses lookup index to retrieve name. Includes optional 
 # argument to save to file where 0 = don't save,1 = save
 
-mapIt(801,0) 
+mapIt(801,1) 
