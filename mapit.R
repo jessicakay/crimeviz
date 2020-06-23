@@ -52,8 +52,7 @@ mapIt<-function(offCode,s){
   code_list<<-as.data.frame(code_list)
   code_name<-code_list$NAME[which(code_list$CODE==offCode)]
   code_indx<-paste("code: ",code_list$CODE[which(code_list$CODE==offCode)],
-                   ", name: \"",code_name,"\"",
-                   sep="")
+                   ", name: \"",code_name,"\"", sep="")
   target<-subset(bos_crime,bos_crime$OFFENSE_CODE %in% offCode)
   years<-as.data.frame(table(target$DISTRICT))
   long_incl<-subset(target,target$Lat>"-71")
@@ -70,7 +69,7 @@ mapIt<-function(offCode,s){
            print({makeMap()})
       dev.off()
     }
-}
+  }
 
 # generates spacial plot of crimes designated by specific code
 # and uses lookup index to retrieve name. Includes optional 
