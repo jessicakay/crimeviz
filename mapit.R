@@ -76,3 +76,9 @@ mapIt<-function(offCode,s){
 # argument to save to file where 0 = don't save,1 = save
 
 mapIt(801,1) 
+
+# add crosshair function below (in progress):
+
+  geo_zoom<-c(MaAlb_lat,MaAlb_long)
+  geom_hline(yintercept = geo_zoom[1],colour="grey")+
+  geom_vline(xintercept = geo_zoom[2],colour="grey")
