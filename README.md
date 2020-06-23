@@ -7,3 +7,7 @@ This code is part of an ongoing project to visualize police data on crime in Bos
 Given that this is part of an ongoing project, I ask that any use of this code follows the attribution-only version of the creative commons license. Please link back to this repository.
 
 jessica
+
+---
+
+note: this code has been part of an ongoing project started in 2018 as a school project but will likely be discontinued, since a much, much better approach to this same problem is now available in RShiny by Lauren Chambers: https://data.aclum.org/bpd-incidents/
