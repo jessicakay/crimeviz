@@ -47,16 +47,16 @@ getSet<-function(category,sub_date,end_date){
   saveSet(setList)
 }
 
-getSet(category,sub_date,end_date)
-
-
 # example query getSet("Graffiti","2020-05-26","2020-05-31")
+getSet(category,sub_date,end_date)  # uses global vars  above 
 
-View(threeoneone)
-too_table<-noquote(threeoneone$submittedphoto)
-write.table(too_table,"~/../Desktop/threeoneone.txt",
-            row.names = FALSE,
-            quote = FALSE)
+
+# loud party calls
+
+too %>% 
+  filter(reason=="Noise Disturbance") %>%
+  filter(open_dt=="2020")
+
 
 
 # pull categories for viewing into separate window
