@@ -8,6 +8,23 @@ library(sqldf)
 
 # load data
 
+loadFiles<-function(startAtFile){
+  setwd("~/../Desktop/311/dataset_archive/")
+  getwd()
+  x<-list.files(getwd())
+  i<-startAtFile
+  buffer<-""
+  while(i < length(x)+1)
+  {
+    print(x[i])
+    y<-read.csv(x[i],header=T)
+    buffer<-rbind(y,buffer)
+    i<-i+1
+    write.csv(buffer,"~/../Desktop/buffer.csv")
+  }
+}
+
+
 too<-read.csv("~/../Desktop/tmp_qu8207b.csv")
 colnames(too)
 
@@ -53,6 +70,7 @@ getSet(category,sub_date,end_date)  # uses global vars  above
 
 # loud party calls
 
+max(too$open_dt)
 
 too %>% 
       filter(reason=="Noise Disturbance") %>%
@@ -76,3 +94,5 @@ View(colnames(too)) # variable names for constructing queries
 for(i in length(threeoneone)){
   curl::curl_download(url = threeoneone[i])
 }
+
+
