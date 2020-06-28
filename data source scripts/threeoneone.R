@@ -53,16 +53,22 @@ getSet(category,sub_date,end_date)  # uses global vars  above
 
 # loud party calls
 
-too %>% 
-  filter(reason=="Noise Disturbance") %>%
-  filter(open_dt=="2020")
 
+too %>% 
+      filter(reason=="Noise Disturbance") %>%
+      filter(open_dt > as.Date("2019-01-01")) %>%
+      ggplot(aes(longitude,latitude))+
+        geom_point(alpha=0.1)+
+        labs(title = "City complaints", 
+             subtitle = "Noise disturbances",
+            caption=attribution)
 
 
 # pull categories for viewing into separate window
 
 View(sqldf('select distinct(reason) from too'))
 View(sqldf('select distinct(type) from too'))
+View(colnames(too)) # variable names for constructing queries
 
 
 # fusker; mass download images
