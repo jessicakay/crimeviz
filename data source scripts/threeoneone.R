@@ -1,9 +1,10 @@
 # 311 data parsing
+# jkant@bu.edu | github.com/jessicakay
 
-library(sqldf)
 library(tidyverse)
 library(dplyr)
 library(lubridate)
+library(sqldf)
 
 # load data
 
@@ -57,9 +58,15 @@ write.table(too_table,"~/../Desktop/threeoneone.txt",
             row.names = FALSE,
             quote = FALSE)
 
+
+# pull categories for viewing into separate window
+
+View(sqldf('select distinct(reason) from too'))
+View(sqldf('select distinct(type) from too'))
+
+
 # fusker; mass download images
 
 for(i in length(threeoneone)){
   curl::curl_download(url = threeoneone[i])
 }
-
