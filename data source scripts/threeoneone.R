@@ -7,6 +7,7 @@ library(lubridate)
 library(sqldf)
 
 attribution<-"github.com/jessicakay"
+buffer<-read.csv("~/../Desktop/buffer.csv")    # 900+ MB dataset...
 
 # load data
 
@@ -64,10 +65,7 @@ getSet<-function(category,sub_date,end_date){
 # example query getSet("Graffiti","2020-05-26","2020-05-31")
 getSet(category,sub_date,end_date)  # uses global vars  above 
 
-
 # loud party calls
-
-buffer<-read.csv("~/../Desktop/buffer.csv")    # 900+ MB dataset...
 
 png(filename = '~/../Documents/GitHub/crimeviz/plots/complaints.png', width= 800, height=500)
 
