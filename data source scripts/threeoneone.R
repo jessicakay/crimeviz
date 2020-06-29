@@ -67,9 +67,9 @@ getSet(category,sub_date,end_date)  # uses global vars  above
 
 # loud party calls
 
-max(too$open_dt)
-
 buffer<-read.csv("~/../Desktop/buffer.csv")    # 900+ MB dataset...
+
+png(filename = '~/../Documents/GitHub/crimeviz/plots/complaints.png', width= 800, height=500)
 
 buffer %>% 
       filter(reason=="Noise Disturbance") %>%
@@ -78,21 +78,18 @@ buffer %>%
       filter(is.na(police_district)==FALSE) %>%
       filter(str_detect(police_district,"[:alpha:]+[:digit:]+")) %>%
         ggplot(aes(longitude,latitude,color=police_district))+
-        geom_point(alpha=0.5)+
-        labs(title = "City complaints", 
+        geom_point(alpha=0.3)+
+        scale_color_discrete(name="District")+
+        labs(title = "City complaints, Boston 311 system", 
              subtitle = "Noise disturbances, 2010-2020",
              caption=attribution)
-        
-# 
-
-
+dev.off()
 
 # pull categories for viewing into separate window
 
 View(sqldf('select distinct(reason) from too'))
 View(sqldf('select distinct(type) from too'))
 View(colnames(too)) # variable names for constructing queries
-
 
 # fusker; mass download images
 
