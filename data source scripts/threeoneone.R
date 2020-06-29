@@ -6,6 +6,8 @@ library(dplyr)
 library(lubridate)
 library(sqldf)
 
+attribution<-"github.com/jessicakay"
+
 # load data
 
 loadFiles<-function(startAtFile){
@@ -18,15 +20,11 @@ loadFiles<-function(startAtFile){
   {
     print(x[i])
     y<-read.csv(x[i],header=T)
-    buffer<-rbind(y,buffer)
+    buffer<<-rbind(y,buffer)
     i<-i+1
     write.csv(buffer,"~/../Desktop/buffer.csv")
   }
 }
-
-
-too<-read.csv("~/../Desktop/tmp_qu8207b.csv")
-colnames(too)
 
 too$open_dt <- as.Date(too$open_dt)
 
@@ -37,7 +35,6 @@ threeoneone <- too %>%
                     filter(str_detect(submittedphoto,".jpg")) %>%
                     filter(open_dt>"2020-06-01") %>%
                     select(submittedphoto, open_dt)
-
 # as a function                    
 
 category<-"Graffiti"
@@ -72,14 +69,22 @@ getSet(category,sub_date,end_date)  # uses global vars  above
 
 max(too$open_dt)
 
-too %>% 
+buffer<-read.csv("~/../Desktop/buffer.csv")    # 900+ MB dataset...
+
+buffer %>% 
       filter(reason=="Noise Disturbance") %>%
-      filter(open_dt > as.Date("2019-01-01")) %>%
-      ggplot(aes(longitude,latitude))+
-        geom_point(alpha=0.1)+
+      filter(as.Date(open_dt) > as.Date("2010-01-01")) %>%
+      filter(as.Date(open_dt) < as.Date("2021-01-01")) %>%
+      filter(is.na(police_district)==FALSE) %>%
+      filter(str_detect(police_district,"[:alpha:]+[:digit:]+")) %>%
+        ggplot(aes(longitude,latitude,color=police_district))+
+        geom_point(alpha=0.5)+
         labs(title = "City complaints", 
-             subtitle = "Noise disturbances",
-            caption=attribution)
+             subtitle = "Noise disturbances, 2010-2020",
+             caption=attribution)
+        
+# 
+
 
 
 # pull categories for viewing into separate window
