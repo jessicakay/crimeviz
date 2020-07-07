@@ -85,9 +85,9 @@ dev.off()
 
 # pull categories for viewing into separate window
 
-View(sqldf('select distinct(reason) from too'))
-View(sqldf('select distinct(type) from too'))
-View(colnames(too)) # variable names for constructing queries
+View(sqldf('select distinct(reason) from threeoneone'))
+View(sqldf('select distinct(type) from threeoneone'))
+View(colnames(threeoneone)) # variable names for constructing queries
 
 # fusker; mass download images
 
@@ -96,3 +96,7 @@ for(i in length(threeoneone)){
 }
 
 
+
+pleasant<-threeoneone %>% 
+  filter(grepl("Pleasant St",location_street_name))
+View(pleasant)
