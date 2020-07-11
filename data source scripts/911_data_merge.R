@@ -163,3 +163,26 @@ pullTracts<-c(25025080401, 25025081700, 25025080601, 25025080100, 25025071201,
               25025070900, 25025080300, 25025080100, 25025061200, 25025071101)
 sqldf('select * from c where * like pullTracts')
 write.table(cbind(a,b),"clipboard",sep="\t")
+
+
+calls<-read.csv("~/../Google Drive/GIS final/911 calls/911 Ecometrics CT Longitudinal, Yearly, External.csv",stringsAsFactors = FALSE)
+
+esf<-read.csv("~/../Desktop/911_calls_2018_vc.csv", stringsAsFactors = FALSE)
+
+fio_data<-read.csv("~/../Desktop/fieldcontacts_for_public_20192.csv",stringsAsFactors = FALSE)
+fio_name<-read.csv("~/../Desktop/fieldcontacts_name_for_public_2019.csv",stringsAsFactors = FALSE)
+library(dplyr)
+library(stringr)
+fio<- fio_data %>% inner_join(fio_name,by="fc_num")
+fio$zip<-paste("0",fio$zip,sep="")
+fio$city[fio$city=="BSTN"]<-"Boston"
+fio$city[fio$city=="BOSTON"]<-"Boston"
+dorchester<-c("DDORCHESTER","DORCH","DORCHESTER","DORCHSTER","DORCCHESTER","DOR","DORCHESTERR")
+fio$city[fio$city %in% dorchester]<-"Dorchester"
+fio$num<-str_extract(fio$streetaddr, "[[:digit:]]+")
+fio$num[is.na(fio$num)]<-""
+fio$txt<-str_extract(fio$streetaddr, "[[:alpha:][:space:]&]+")
+fio$zip
+write.csv(fio,"~/../Desktop/cleaned.csv")
+
+esf %>% group_by()
