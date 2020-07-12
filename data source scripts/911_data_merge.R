@@ -1,7 +1,10 @@
 
+library(dplyr)
+library(stringr)
+
 # Boston Fire data
 
-# parse all data in folder and output to master file
+  # parse all data in folder and output to master file
 
 loadFiles<-function(startAtFile){
   setwd("~/../Downloads/Boston Fire data/")
@@ -18,46 +21,41 @@ loadFiles<-function(startAtFile){
       write.csv(buffer,"~/../Desktop/buffer.csv")
     }
 }
-# note: even after merging all 30 available datasets, 
-# narcan adminstration doesn't appear in a single one.
-# using "police matter" and other vague codes
 
-dataset<-read.csv("~/../Desktop/GIS final/fire dept data for GIS project/bfdata_all.csv")
-colnames(dataset)
-colnames(dataset)<-gsub("\\.","",colnames(dataset))
+  # note: even after merging all 30 available datasets, 
+  # narcan adminstration doesn't appear in a single one.
+  # using "police matter" and other vague codes
 
-# add city and state columns for geocoding
+  dataset<-read.csv("~/../Desktop/GIS final/fire dept data for GIS project/bfdata_all.csv")
+  colnames(dataset)<-gsub("\\.","",colnames(dataset))
 
-codeableData<-dataset
-codeableData$city<-"Boston"
-codeableData$state<-"MA"
+  # add city and state columns for geocoding
 
-# strip extra white space
-codeableData$StreetNumber<-gsub("\\s+"," ",codeableData$StreetNumber) 
-codeableData$StreetName<-gsub("\\s+"," ",codeableData$StreetName)
-codeableData$StreetType<-gsub("\\s+"," ",codeableData$StreetType)
-codeableData$StreetName<-trimws(codeableData$StreetName,which=c("both"), whitespace = "[ \t\r\n]")
-codeableData$address<-paste(codeableData$StreetNumber,
-                            codeableData$StreetName,
-                            codeableData$StreetType,sep = " ")
+  codeableData<-dataset
+  codeableData$city<-"Boston"
+  codeableData$state<-"MA"
 
-colnames(codeableData)
-View(codeableData)
-write.csv(codeableData,"~/../Desktop/GIS final/fire dept data for GIS project/allforgeo.csv")
+  # strip extra white space
+  
+  codeableData$StreetNumber<-gsub("\\s+"," ",codeableData$StreetNumber) 
+  codeableData$StreetName<-gsub("\\s+"," ",codeableData$StreetName)
+  codeableData$StreetType<-gsub("\\s+"," ",codeableData$StreetType)
+  codeableData$StreetName<-trimws(codeableData$StreetName,which=c("both"), whitespace = "[ \t\r\n]")
+  codeableData$address<-paste(codeableData$StreetNumber,
+                              codeableData$StreetName,
+                              codeableData$StreetType,sep = " ")
 
-all<-read.csv("~/../Desktop/GIS final/fire dept data for GIS project/allforgeo.csv")
+  # create subsetted data using only 
 
-# create subsetted data using only 
-possibleCodes<-c(300,311,320,321,381,500,
-                 510,550,551,552,553,554,
-                 600,661,900,911)
+    possibleCodes<-c(300,311,320,321,381,500,
+                   510,550,551,552,553,554,
+                   600,661,900,911)
 
-x<-subset(all,all$IncidentType %in% c(possibleCodes))
-write.csv(x,"~/../Desktop/GIS final/fire dept data for GIS project/justthose.csv")
+  x<-subset(all,all$IncidentType %in% c(possibleCodes))
 
-sqldf("select distinct(IncidentType), 
-      IncidentDescription from dataset where 
-      AlarmDate like '%2019%'")
+  sqldf("select distinct(IncidentType), 
+        IncidentDescription from dataset where 
+        AlarmDate like '%2019%'")
 
 
 # mapIt function for Boston Crime Data, 2019, Jess Kant
@@ -127,52 +125,52 @@ library(stringr)
   newtab<-select(assaults,"YEAR","DISTRICT")
   x<-table(newtab)
   write.table(x,"clipboard",sep="\t")
-
   colnames(tble)[1]<-"description"
   colnames(tble)[2]<-"year"
   
   # subset generation
+    
+    colnames(bos_crime)
+    portOver<-c("YEAR","Long","Lat","OFFENSE_CODE_GROUP","YEAR","DISTRICT")
+    trimmed<-select(bos_crime, portOver)
+    write.csv(trimmed,"~/../Desktop/GIS final/all_years_trimmed.csv")
+    
+    july2018<-read.csv("~/../Desktop/July assault, 2018.csv")
+    july2019<-read.csv("~/../Desktop/July assault, 2019.csv")
+    
+    colnames(july2018)[1]<-"CT"
+    colnames(july2019)[1]<-"CT"
+    colnames(july2018)[76]<-"tract"
+    colnames(july2019)[76]<-"tract"
+    
+    a<-as.data.frame(sqldf('select count(*), CT from july2018 group by CT'))
+    b<-as.data.frame(sqldf('select count(*), CT from july2019 group by CT'))
+    c<-cbind(a,b)
+    
+    colnames(c)[1]<-"2018"
+    colnames(c)[2]<-"CT_18"
+    colnames(c)[3]<-"2019"
+    colnames(c)[4]<-"CT_19"
+    
+    colnames(c)<-"1"
+    
+    pullTracts<-c(25025080401, 25025081700, 25025080601, 25025080100, 25025071201, 
+                  25025070900, 25025080300, 25025080100, 25025061200, 25025071101)
+    sqldf('select * from c where * like pullTracts')
+    write.table(cbind(a,b),"clipboard",sep="\t")
 
-library(dplyr)
-colnames(bos_crime)
-portOver<-c("YEAR","Long","Lat","OFFENSE_CODE_GROUP","YEAR","DISTRICT")
-trimmed<-select(bos_crime, portOver)
-write.csv(trimmed,"~/../Desktop/GIS final/all_years_trimmed.csv")
-
-
-july2018<-read.csv("~/../Desktop/July assault, 2018.csv")
-july2019<-read.csv("~/../Desktop/July assault, 2019.csv")
-
-colnames(july2018)[1]<-"CT"
-colnames(july2019)[1]<-"CT"
-colnames(july2018)[76]<-"tract"
-colnames(july2019)[76]<-"tract"
-
-a<-as.data.frame(sqldf('select count(*), CT from july2018 group by CT'))
-b<-as.data.frame(sqldf('select count(*), CT from july2019 group by CT'))
-c<-cbind(a,b)
-
-colnames(c)[1]<-"2018"
-colnames(c)[2]<-"CT_18"
-colnames(c)[3]<-"2019"
-colnames(c)[4]<-"CT_19"
-
-colnames(c)<-"1"
-
-pullTracts<-c(25025080401, 25025081700, 25025080601, 25025080100, 25025071201, 
-              25025070900, 25025080300, 25025080100, 25025061200, 25025071101)
-sqldf('select * from c where * like pullTracts')
-write.table(cbind(a,b),"clipboard",sep="\t")
-
-
-calls<-read.csv("~/../Google Drive/GIS final/911 calls/911 Ecometrics CT Longitudinal, Yearly, External.csv",stringsAsFactors = FALSE)
+# BARI 911 calls, breakdown by crime type
 
 esf<-read.csv("~/../Desktop/911_calls_2018_vc.csv", stringsAsFactors = FALSE)
+x<-esf %>% 
+  select(Gn_2018,Vl_2018,SD_2018,PC_2018,ISD_Nbh) %>%
+  group_by(ISD_Nbh) %>%
+  mutate(m=mean(Gn_2018))
+
+# FIO 
 
 fio_data<-read.csv("~/../Desktop/fieldcontacts_for_public_20192.csv",stringsAsFactors = FALSE)
 fio_name<-read.csv("~/../Desktop/fieldcontacts_name_for_public_2019.csv",stringsAsFactors = FALSE)
-library(dplyr)
-library(stringr)
 fio<- fio_data %>% inner_join(fio_name,by="fc_num")
 fio$zip<-paste("0",fio$zip,sep="")
 fio$city[fio$city=="BSTN"]<-"Boston"
@@ -182,11 +180,23 @@ fio$city[fio$city %in% dorchester]<-"Dorchester"
 fio$num<-str_extract(fio$streetaddr, "[[:digit:]]+")
 fio$num[is.na(fio$num)]<-""
 fio$txt<-str_extract(fio$streetaddr, "[[:alpha:][:space:]&]+")
-fio$zip
 write.csv(fio,"~/../Desktop/cleaned.csv")
 
-x<-esf %>% 
-  select(Gn_2018,Vl_2018,SD_2018,PC_2018,ISD_Nbh) %>%
-  group_by(ISD_Nbh) %>%
-
-  mutate(m=mean(Gn_2018))
+png(filename = '~/../Desktop/duration.png', 
+    width= 800, height=500)
+    fio %>%
+      filter(!is.na(stop_duration)) %>%
+      filter(stop_duration!="NULL") %>%
+      filter(sex !="NULL" & sex != "Unknown") %>%
+      filter(race !="NULL" & race != "Unknown") %>%
+      mutate(stop_duration=as.numeric(stop_duration)) %>%
+      ggplot(mapping = aes(stop_duration))+
+        geom_histogram(binwidth = 10)+
+        labs(title = "BPD Field Encounter and Interrogation, 2019", 
+             subtitle = "Breakdown of stop duration by race and gender", 
+             caption = "github.com/jessicakay/crimeviz")+
+        xlab("Duration of stop (mins)")+
+        ylab("Number of stops")+
+        facet_grid(sex~race)
+  dev.off()
+    
