@@ -185,4 +185,8 @@ fio$txt<-str_extract(fio$streetaddr, "[[:alpha:][:space:]&]+")
 fio$zip
 write.csv(fio,"~/../Desktop/cleaned.csv")
 
-esf %>% group_by()
+x<-esf %>% 
+  select(Gn_2018,Vl_2018,SD_2018,PC_2018,ISD_Nbh) %>%
+  group_by(ISD_Nbh) %>%
+
+  mutate(m=mean(Gn_2018))

@@ -27,20 +27,18 @@ loadFiles<-function(startAtFile){
   }
 }
 
-too$open_dt <- as.Date(too$open_dt)
-
 # select out reports with user-submitted photos, dump into dataframe
 
-threeoneone <- too %>% 
+threeoneone <- buffer %>% 
                     filter(is.na(submittedphoto)==FALSE) %>%
                     filter(str_detect(submittedphoto,".jpg")) %>%
-                    filter(open_dt>"2020-06-01") %>%
-                    select(submittedphoto, open_dt)
+                    filter(as.Date(open_dt) > as.Date("2020-06-01")) %>%
+                    select(submittedphoto, open_dt) 
 # as a function                    
 
-category<-"Graffiti"
-sub_date<-"2020-05-25"
-end_date<-"2020-06-01"
+category<<-"Graffiti"
+sub_date<-"2020-06-01"
+end_date<-"2020-07-11"
 targpath<-"~/../Desktop/"
 end_date<-as.Date(end_date)
 
@@ -50,12 +48,12 @@ saveSet<-function(x){
               quote = FALSE)}
 
 getSet<-function(category,sub_date,end_date){
-  setList <<- too %>% 
+  setList <<- buffer %>% 
       filter(reason==category) %>%
       filter(is.na(submittedphoto)==FALSE) %>%
       filter(str_detect(submittedphoto,".jpg")) %>%
-      filter(open_dt > as.Date(sub_date)) %>%
-      filter(open_dt < as.Date(end_date)) %>%
+      filter(as.Date(open_dt) > as.Date(sub_date)) %>%
+      filter(as.Date(open_dt) < as.Date(end_date)) %>%
       select(submittedphoto, open_dt, reason)
   View(setList)
   setList <<- setList %>% select(submittedphoto)
@@ -100,3 +98,5 @@ for(i in length(threeoneone)){
 pleasant<-threeoneone %>% 
   filter(grepl("Pleasant St",location_street_name))
 View(pleasant)
+
+
