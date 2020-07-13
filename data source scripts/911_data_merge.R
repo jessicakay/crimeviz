@@ -172,18 +172,39 @@ x<-esf %>%
 fio_data<-read.csv("~/../Desktop/fieldcontacts_for_public_20192.csv",stringsAsFactors = FALSE)
 fio_name<-read.csv("~/../Desktop/fieldcontacts_name_for_public_2019.csv",stringsAsFactors = FALSE)
 fio<- fio_data %>% inner_join(fio_name,by="fc_num")
+
+# clean data
+
 fio$zip<-paste("0",fio$zip,sep="")
 fio$city[fio$city=="BSTN"]<-"Boston"
 fio$city[fio$city=="BOSTON"]<-"Boston"
 dorchester<-c("DDORCHESTER","DORCH","DORCHESTER","DORCHSTER","DORCCHESTER","DOR","DORCHESTERR")
-fio$city[fio$city %in% dorchester]<-"Dorchester"
+boston<-c("BOSTON","BSTN","BTSN","BSNT","BSTNA","BSTON","boston","Boston")
+fio$city[fio$city %in% dorchester]<-"DORCHESTER"
+fio$city[fio$city %in% boston]<-"BOSTON"
 fio$num<-str_extract(fio$streetaddr, "[[:digit:]]+")
 fio$num[is.na(fio$num)]<-""
 fio$txt<-str_extract(fio$streetaddr, "[[:alpha:][:space:]&]+")
+
+
+
+sitch<-unlist(strsplit(fio$key_situations,","))
+sitch<-as.data.frame(trimws(sitch))
+sitch<-distinct(sitch)
+colnames(sitch)[1]<-"keywords"
+
+
 write.csv(fio,"~/../Desktop/cleaned.csv")
+
+
+
+fio$stop_duration<-as.numeric(fio$stop_duration)
+summary(as.numeric(fio$stop_duration))
+table(fio$stop)
 
 png(filename = '~/../Desktop/duration.png', 
     width= 800, height=500)
+
     fio %>%
       filter(!is.na(stop_duration)) %>%
       filter(stop_duration!="NULL") %>%
@@ -191,12 +212,41 @@ png(filename = '~/../Desktop/duration.png',
       filter(race !="NULL" & race != "Unknown") %>%
       mutate(stop_duration=as.numeric(stop_duration)) %>%
       ggplot(mapping = aes(stop_duration))+
-        geom_histogram(binwidth = 10)+
+        geom_histogram(binwidth = 5)+
+        xlim(0,90)+
         labs(title = "BPD Field Encounter and Interrogation, 2019", 
              subtitle = "Breakdown of stop duration by race and gender", 
              caption = "github.com/jessicakay/crimeviz")+
         xlab("Duration of stop (mins)")+
         ylab("Number of stops")+
         facet_grid(sex~race)
-  dev.off()
     
+  dev.off()
+
+  
+  # FIO analytics
+  
+  round(prop.table(table(fio$race[fio$frisk.search!="NULL"],
+                     fio$frisk.search[fio$frisk.search!="NULL"]),
+               margin = 1),2)
+  
+  x<-fio %>% 
+    select(race,ethnicity,frisk.search,sex) %>%
+    filter(frisk.search!="NULL" & is.null(frisk.search)==FALSE) 
+
+  prop.table(table(fio$basis,fio$race),margin = 1)
+
+  fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
+          filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
+          filter(race=="Black" | race=="White") %>%
+            ggplot(mapping = aes(basis)) +
+            geom_bar() +
+            facet_grid(.~race)
+  
+  fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
+    filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
+    filter(race=="Black" | race=="White") %>%
+    filter(ethnicity!="Unknown" & is.null(ethnicity)==FALSE & ethnicity!="NULL") %>%
+    ggplot(mapping = aes(basis,fill=race)) +
+      geom_bar(position = "dodge")+
+      facet_grid(.~ethnicity)
