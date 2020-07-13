@@ -187,12 +187,15 @@ fio$num[is.na(fio$num)]<-""
 fio$txt<-str_extract(fio$streetaddr, "[[:alpha:][:space:]&]+")
 
 
+# function to pull distinct values from vectors, includes 
+# support for multi-select lists such as "select all that apply" fields. 
 
-sitch<-unlist(strsplit(fio$key_situations,","))
-sitch<-as.data.frame(trimws(sitch))
-sitch<-distinct(sitch)
-colnames(sitch)[1]<-"keywords"
-
+getVals<-function(target){
+  new_df<<-unlist(strsplit(target,","))
+  new_df<<-as.data.frame(trimws(new_df))
+  new_df<<-distinct(new_df)
+  colnames(new_df)[1]<<-"keywords"
+}
 
 write.csv(fio,"~/../Desktop/cleaned.csv")
 
@@ -223,6 +226,56 @@ png(filename = '~/../Desktop/duration.png',
     
   dev.off()
 
+  # import Jackie's cleaned dataset
+  
+  fio<-read.csv("~/../Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
+  
+  
+  
+  fio %>%
+    filter(sex != "NULL" & sex != "Unknown" & is.na(sex) == FALSE) %>%
+    filter(race != "NULL" &
+             race != "Unknown" & is.na(race) == FALSE & race != "") %>%
+    filter(
+      stop_duration != "NULL" & stop_duration != "Unknown" &
+        is.na(stop_duration) == FALSE & stop_duration != ""
+    ) %>%
+    mutate(
+      sex = case_when(
+        sex == "Male" ~ "Male",
+        sex == "Transgender Female to Male" ~ "Male",
+        sex == "Female" ~ "Female",
+        sex == "Transgender Male to Female" ~ "Female"
+      )
+    ) %>%
+    mutate(
+      stop_duration = case_when(
+        stop_duration == "Less Than Five Minutes" ~ "<5",
+        stop_duration == "Five to Ten Minutes" ~ "5-10",
+        stop_duration == "Ten to Fifteen Minutes" ~ "10-15",
+        stop_duration == "Fifteen to Twenty Minutes" ~ "15-20",
+        stop_duration == "Twenty to Twenty-Five Minutes" ~ "20-25",
+        stop_duration == "Twenty-Five to Thirty Minutes" ~ "25-30",
+        stop_duration == "Thirty to Forty-Five Minutes" ~ "30-45",
+        stop_duration == "Forty-Five to Sixty Minutes" ~ "45-60",
+        stop_duration == "One to Two Hours" ~ "60-120",
+        stop_duration == "Longer Than Two Hours" ~ ">2 hrs"
+      )
+    ) %>%
+    ggplot(mapping = aes(stop_duration)) +
+    geom_bar() +
+    labs(title = "BPD Field Interrogation and Observation (FIO) data, 2019",
+         subtitle = "Breakdown of stop duration by race and gender",
+         caption = "github.com/jessicakay/crimeviz") +
+    xlab("Duration of stop (mins)") +
+    ylab("Number of stops") +
+    theme(axis.text.x = element_text(angle = 45)) +
+    facet_grid(sex ~ race)
+
+  
+    
+  
+  table(fio %>%select(sex))
   
   # FIO analytics
   
@@ -249,4 +302,4 @@ png(filename = '~/../Desktop/duration.png',
     filter(ethnicity!="Unknown" & is.null(ethnicity)==FALSE & ethnicity!="NULL") %>%
     ggplot(mapping = aes(basis,fill=race)) +
       geom_bar(position = "dodge")+
-      facet_grid(.~ethnicity)
+      facet_grid(sex~ethnicity)
