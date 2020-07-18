@@ -29,8 +29,9 @@ getVals<-function(target){
 }
 
 write.csv(fio,"~/../Desktop/cleaned.csv")
-fio<-read.csv("~/..k43_fio_2019.csv")
 
+fio<-read.csv("~/../Desktop/mark43_fio_2019.csv") # obs from dates 9/29/19 - 12/31/19
+fio<-read.csv("~/../Desktop/rms_fio_2019.csv") # obs 1/1/2019 - 9/29/2019
 
 fio$stop_duration<-as.numeric(fio$stop_duration)
 summary(as.numeric(fio$stop_duration))
