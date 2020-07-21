@@ -28,8 +28,6 @@ getVals<-function(target){
   colnames(new_df)[1]<<-"keywords"
 }
 
-write.csv(fio,"~/../Desktop/cleaned.csv")
-
 fio<-read.csv("~/../Desktop/mark43_fio_2019.csv") # obs from dates 9/29/19 - 12/31/19
 fio<-read.csv("~/../Desktop/rms_fio_2019.csv") # obs 1/1/2019 - 9/29/2019
 
