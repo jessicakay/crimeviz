@@ -6,8 +6,10 @@ This code is part of an ongoing project to visualize police data on crime in Bos
 
 Future efforts will focus on analyzing the contributory factors that lead to overpolicing in Boston.
 
+
+
 jessica
 
 ---
 
-note: the original mapIt() function was written as part of an ongoing project started in 2018 as a school project but will likely be discontinued, since a much, much better approach to this same problem is now available in RShiny by Lauren Chambers: https://data.aclum.org/bpd-incidents/
+note: the original mapIt() function was written as part of an ongoing project started in 2018 as a school project but will likely be discontinued, since a much, much better approach to this same problem is now available in plotly/RShiny by Lauren Chambers: https://data.aclum.org/bpd-incidents/
