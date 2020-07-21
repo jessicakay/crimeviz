@@ -139,12 +139,21 @@ x<-fio %>%
 
 prop.table(table(fio$basis,fio$race),margin = 1)
 
+# plot breakdown of stops by basis, stratify by sex/race
+
 fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
   filter(race=="Black" | race=="White") %>%
+  filter(sex!="NA" & is.na(sex)==FALSE & is.null(sex)==FALSE) %>%
+  mutate(
+    sex = case_when(
+      sex == "Male" ~ "Male",
+      sex == "Transgender Female to Male" ~ "Male",
+      sex == "Female" ~ "Female",
+      sex == "Transgender Male to Female" ~ "Female")) %>%
   ggplot(mapping = aes(basis)) +
-  geom_bar() +
-  facet_grid(.~race)
+    geom_bar() +
+    facet_grid(sex~race)
 
 fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
