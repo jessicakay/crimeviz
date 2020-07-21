@@ -1,3 +1,8 @@
+library(lubridate)
+library(tidyverse)
+library(stringr)
+library(sqldf)
+
 # FIO 
 
 fio_data<-read.csv("~/../Desktop/fieldcontacts_for_public_20192.csv",stringsAsFactors = FALSE)
@@ -60,12 +65,22 @@ dev.off()
 
 fio<-read.csv("~/../Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
 
-fio$stop_duration<-factor(fio$stop_duration,levels=c("Less Than Five Minutes", 
-                          "Five to Ten Minutes", "Ten to Fifteen Minutes",
-                          "Fifteen to Twenty Minutes", "Twenty to Twenty-Five Minutes",
-                          "Twenty-Five to Thirty Minutes", "Thirty to Forty-Five Minutes",
-                          "Forty-Five to Sixty Minutes", "One to Two Hours",
-                          "Longer Than Two Hours"),ordered = TRUE)
+fio$stop_duration <- factor(
+  fio$stop_duration,
+  levels = c(
+    "Less Than Five Minutes",
+    "Five to Ten Minutes",
+    "Ten to Fifteen Minutes",
+    "Fifteen to Twenty Minutes",
+    "Twenty to Twenty-Five Minutes",
+    "Twenty-Five to Thirty Minutes",
+    "Thirty to Forty-Five Minutes",
+    "Forty-Five to Sixty Minutes",
+    "One to Two Hours",
+    "Longer Than Two Hours"
+  ),
+  ordered = TRUE
+)
 
 fio %>%
   filter(sex != "NULL" & sex != "Unknown" & is.na(sex) == FALSE) %>%
@@ -97,8 +112,8 @@ fio %>%
       stop_duration == "Longer Than Two Hours" ~ ">2 hrs"
     )
   ) %>%
-  ggplot(mapping = aes(x=reorder(stop_duration,stop_duration))) +
-  geom_bar() +
+  ggplot(mapping = aes(x=stop_duration)) +
+  geom_bar()+
   labs(title = "BPD Field Interrogation and Observation (FIO) data, 2019",
        subtitle = "Breakdown of stop duration by race and gender",
        caption = "github.com/jessicakay/crimeviz") +
