@@ -3,6 +3,8 @@ library(tidyverse)
 library(stringr)
 library(sqldf)
 
+# jkant@bu.edu
+
 # FIO 
 
 fio_data<-read.csv("~/../Desktop/fieldcontacts_for_public_20192.csv",stringsAsFactors = FALSE)
@@ -85,7 +87,8 @@ fio$stop_duration <- factor(
 fio %>%
   filter(sex != "NULL" & sex != "Unknown" & is.na(sex) == FALSE) %>%
   filter(race != "NULL" &
-           race != "Unknown" & is.na(race) == FALSE & race != "") %>%
+           race != "Unknown" &
+           is.na(race) == FALSE & race != "") %>%
   filter(
     stop_duration != "NULL" & stop_duration != "Unknown" &
       is.na(stop_duration) == FALSE & stop_duration != ""
@@ -112,8 +115,8 @@ fio %>%
       stop_duration == "Longer Than Two Hours" ~ ">2 hrs"
     )
   ) %>%
-  ggplot(mapping = aes(x=stop_duration)) +
-  geom_bar()+
+  ggplot(mapping = aes(x = stop_duration)) +
+  geom_bar() +
   labs(title = "BPD Field Interrogation and Observation (FIO) data, 2019",
        subtitle = "Breakdown of stop duration by race and gender",
        caption = "github.com/jessicakay/crimeviz") +
@@ -121,9 +124,6 @@ fio %>%
   ylab("Number of stops") +
   theme(axis.text.x = element_text(angle = 45)) +
   facet_grid(sex ~ race)
-
-
-
 
 table(fio %>%select(sex))
 
