@@ -170,22 +170,7 @@ table(
 # anti-Blackness has in policing in Boston; this is not 
 # a comprehensive breakdown of race/ethnicity
 
-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
-  filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
-  filter(race=="Black" | race=="White") %>%
-  filter(sex!="NA" & is.na(sex)==FALSE & is.null(sex)==FALSE & 
-           is_empty(sex)==FALSE & sex!="") %>%
-  filter(sex=="Male" | sex=="Female") %>%
-  mutate(
-    frisked=case_when(
-      frisked=="" ~ "Not Frisked",
-      frisked=="Y" ~ "Frisked"))%>%
-  mutate(
-    sex = case_when(
-      sex == "Male" ~ "Male",
-      sex == "Transgender Female to Male" ~ "Male",
-      sex == "Female" ~ "Female",
-      sex == "Transgender Male to Female" ~ "Female")) %>%
+
   ggplot(mapping = aes(basis,fill=frisked,position="stacked")) +
     geom_bar() +
     coord_flip() +
@@ -196,6 +181,46 @@ fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   ylab("number of stops")+
     facet_grid(sex~race)
 
+p<-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
+  filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
+  filter(race=="Black" | race=="White") %>%
+  filter(sex!="NA" & is.na(sex)==FALSE & is.null(sex)==FALSE & 
+           is_empty(sex)==FALSE & sex!="") %>%
+  filter(sex=="Male" | sex=="Female") %>%
+  mutate(
+    searchperson=case_when(
+      searchperson=="" ~ "Not searched",
+      searchperson=="Y" ~ "Searched"))%>%
+  mutate(
+    frisked=case_when(
+    frisked=="" ~ "Not frisked",
+    frisked=="Y" ~ "Frisked"))%>%
+    mutate(
+    sex = case_when(
+      sex == "Male" ~ "Male",
+      sex == "Transgender Female to Male" ~ "Male",
+      sex == "Female" ~ "Female",
+      sex == "Transgender Male to Female" ~ "Female"))
+
+search<-p %>% ggplot(fio, mapping = aes(basis,fill=searchperson,position="stacked")) +
+  geom_bar() +
+  coord_flip() +
+  labs(title="FIO searches, January-September 2019",
+       subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender",
+       caption = attribution)+
+  xlab("")+
+  ylab("number of stops")+
+  facet_grid(sex~race)
+
+frisk<-p %>% ggplot(fio, mapping = aes(basis,fill=frisked,position="stacked")) +
+  geom_bar() +
+  coord_flip() +
+  xlab("")+
+  ylab("number of stops")+
+  facet_grid(sex~race)
+
+gridExtra::grid.arrange(search,frisk)
+
 #
 
 fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
@@ -205,6 +230,9 @@ fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   ggplot(mapping = aes(basis,fill=race)) +
   geom_bar(position = "dodge")+
   facet_grid(sex~ethnicity)
+
+
+table(fio$contact_officer_name,fio$frisked,fio$race)
 
 
 # qualitative analysis
