@@ -5,6 +5,8 @@ library(sqldf)
 
 # jkant@bu.edu
 
+attribution <- "github.com/jessicakay/crimeviz"
+
 # FIO 
 
 fio_data<-read.csv("~/../Desktop/fieldcontacts_for_public_20192.csv",stringsAsFactors = FALSE)
@@ -140,11 +142,19 @@ x<-fio %>%
 prop.table(table(fio$basis,fio$race),margin = 1)
 
 # plot breakdown of stops by basis, stratify by sex/race
+# 
+# coding notes: sex is converted to gender, as BPD's 
+# categorization is based on an erroneous understanding of gender identity
+
+details<-round(prop.table(table(fio$race,fio$sex)),2)
+black_f<-details[14]
 
 fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
   filter(race=="Black" | race=="White") %>%
-  filter(sex!="NA" & is.na(sex)==FALSE & is.null(sex)==FALSE) %>%
+  filter(sex!="NA" & is.na(sex)==FALSE & is.null(sex)==FALSE & 
+           is_empty(sex)==FALSE & sex!="") %>%
+  filter(sex=="Male" | sex=="Female") %>%
   mutate(
     sex = case_when(
       sex == "Male" ~ "Male",
@@ -153,6 +163,12 @@ fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
       sex == "Transgender Male to Female" ~ "Female")) %>%
   ggplot(mapping = aes(basis)) +
     geom_bar() +
+    coord_flip() +
+    labs(title="FIO searches, January-September 2019",
+         subtitle = "comparison of Black and white, breakdown by gender",
+         caption = attribution)+
+  xlab("")+
+  ylab("number of stops")+
     facet_grid(sex~race)
 
 fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
