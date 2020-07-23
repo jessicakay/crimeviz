@@ -155,11 +155,15 @@ fio$frisked<-factor(fio$frisked,levels = rev(levels(fio$fri)))
 
 fio$frisked<-factor(fio$frisked,levels = rev(levels(fio$fri)))
 
+c_lev<-c("","Y")
+c_ord<-c("Y","")
+fio$frisked[order(match(c_lev,c_ord))]
+
 table(
   fio %>%
         filter(sex=="Male" | sex=="Female") %>%
         filter(race=="Black" | race=="White") %>%
-        select(frisked,sex,race)
+        select(frisked,sex,race,basis)
       )
 
 # note: this analysis is looking specifically at the role 
@@ -182,11 +186,11 @@ fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
       sex == "Transgender Female to Male" ~ "Male",
       sex == "Female" ~ "Female",
       sex == "Transgender Male to Female" ~ "Female")) %>%
-  ggplot(mapping = aes(basis,fill=frisked)) +
+  ggplot(mapping = aes(basis,fill=frisked,position="stacked")) +
     geom_bar() +
     coord_flip() +
     labs(title="FIO searches, January-September 2019",
-         subtitle = "comparison of Black and white, breakdown by gender",
+         subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender",
          caption = attribution)+
   xlab("")+
   ylab("number of stops")+
