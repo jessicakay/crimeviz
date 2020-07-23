@@ -148,6 +148,23 @@ prop.table(table(fio$basis,fio$race),margin = 1)
 
 details<-round(prop.table(table(fio$race,fio$sex)),2)
 black_f<-details[14]
+black_m<-details[15]
+
+table(fio$frisked,fio$race,fio$sex)
+fio$frisked<-factor(fio$frisked,levels = rev(levels(fio$fri)))
+
+fio$frisked<-factor(fio$frisked,levels = rev(levels(fio$fri)))
+
+table(
+  fio %>%
+        filter(sex=="Male" | sex=="Female") %>%
+        filter(race=="Black" | race=="White") %>%
+        select(frisked,sex,race)
+      )
+
+# note: this analysis is looking specifically at the role 
+# anti-Blackness has in policing in Boston; this is not 
+# a comprehensive breakdown of race/ethnicity
 
 fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
@@ -156,12 +173,16 @@ fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
            is_empty(sex)==FALSE & sex!="") %>%
   filter(sex=="Male" | sex=="Female") %>%
   mutate(
+    frisked=case_when(
+      frisked=="" ~ "Not Frisked",
+      frisked=="Y" ~ "Frisked"))%>%
+  mutate(
     sex = case_when(
       sex == "Male" ~ "Male",
       sex == "Transgender Female to Male" ~ "Male",
       sex == "Female" ~ "Female",
       sex == "Transgender Male to Female" ~ "Female")) %>%
-  ggplot(mapping = aes(basis)) +
+  ggplot(mapping = aes(basis,fill=frisked)) +
     geom_bar() +
     coord_flip() +
     labs(title="FIO searches, January-September 2019",
@@ -170,6 +191,8 @@ fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   xlab("")+
   ylab("number of stops")+
     facet_grid(sex~race)
+
+#
 
 fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
