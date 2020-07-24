@@ -153,7 +153,12 @@ black_m<-details[15]
 
 fio<-read.csv("~/../Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
 
-table(fio$frisked,fio$race,fio$sex)
+table(
+  fio %>%
+    filter(sex == "Male" | sex == "Female") %>%
+    filter(race == "Black" | race == "White") %>%
+    select(frisked, sex, race, basis)
+)
 
 
 fio$frisked<-as.factor(fio$frisked)
@@ -162,12 +167,6 @@ levels(fio$frisked)
 levels(fio$searchperson)
 
 
-table(
-  fio %>%
-        filter(sex=="Male" | sex=="Female") %>%
-        filter(race=="Black" | race=="White") %>%
-        select(frisked,sex,race,basis)
-      )
 
 
 p<-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
@@ -194,32 +193,53 @@ p<-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
 
 levels(fio$searchperson)
 
+# get caption data...
+
+j<-table(fio %>% filter(frisked == "Y") %>%
+                      filter(basis == "Probable Cause") %>%
+                      select(frisked, race,sex))
+k<-round(prop.table(j),2)
+black_num_frisked<-paste(j[30]," ( ",k[36]*100,"% )",sep="")
+white_num_frisked<-paste(j[30]," ( ",k[36]*100,"% )",sep="")
+j<-table(fio %>% filter(searchperson == "Y") %>%
+           filter(basis == "Probable Cause") %>%
+           select(searchperson, race,sex))
+k<-round(prop.table(j),2)
+black_num_searchd<-paste(j[26]," ( ",k[30]*100,"% )",sep="")
+
+
 # note: this analysis is looking specifically at the role 
 # anti-Blackness has in policing in Boston; this is not 
 # a comprehensive breakdown of race/ethnicity
+
 
 
 search<-p %>% ggplot(fio, mapping = aes(basis,fill=searchperson,position="stacked")) +
   geom_bar() +
   coord_flip() +
   labs(title="FIO searches, January-September 2019",
-       subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender")+
+       subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender",
+       caption = black_num_searchd)+
   xlab("")+
   ylab("number of stops")+
-  scale_fill_discrete(name="searched")
+  scale_fill_manual(name="searched",values = c("darkgray","firebrick"))+
   facet_grid(sex~race)
 
 frisk<-p %>% ggplot(fio, mapping = aes(basis,fill=frisked,position="stacked")) +
   geom_bar() +
   coord_flip()+
+  labs(caption = black_num_frisked)+
   xlab("")+
   ylab("number of stops")+
+  scale_fill_manual(values = c("darkgray","firebrick","firebrick"))+
   labs(caption=attribution)+
   facet_grid(sex~race)
 
+png(filename="~/../Documents/Github/crimeviz/plots/bias_redgrey.png", width= 800, height=800)
 gridExtra::grid.arrange(search,frisk)
+dev.off()
 
-p %>% ggplot
+
 
 #
 
