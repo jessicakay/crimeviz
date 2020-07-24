@@ -179,17 +179,18 @@ p<-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   mutate(
     searchperson=case_when(
       searchperson=="" ~ "Not searched",
-      searchperson=="Y" ~ "Searched"))%>%
+      searchperson=="Y" ~ "Searched"),ordered=TRUE)%>%
   mutate(
     frisked=case_when(
     frisked=="" ~ "Not frisked",
     frisked=="Y" ~ "Frisked"))%>%
+  mutate(frisked=factor(frisked,levels=c("Not frisked","Frisked")))%>%
     mutate(
     sex = case_when(
       sex == "Male" ~ "Male",
       sex == "Transgender Female to Male" ~ "Male",
       sex == "Female" ~ "Female",
-      sex == "Transgender Male to Female" ~ "Female"))
+      sex == "Transgender Male to Female" ~ "Female")) 
 
 levels(fio$searchperson)
 
@@ -202,10 +203,10 @@ search<-p %>% ggplot(fio, mapping = aes(basis,fill=searchperson,position="stacke
   geom_bar() +
   coord_flip() +
   labs(title="FIO searches, January-September 2019",
-       subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender",
-       caption = attribution)+
+       subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender")+
   xlab("")+
   ylab("number of stops")+
+  scale_fill_discrete(name="searched")
   facet_grid(sex~race)
 
 frisk<-p %>% ggplot(fio, mapping = aes(basis,fill=frisked,position="stacked")) +
