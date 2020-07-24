@@ -171,16 +171,6 @@ table(
 # a comprehensive breakdown of race/ethnicity
 
 
-  ggplot(mapping = aes(basis,fill=frisked,position="stacked")) +
-    geom_bar() +
-    coord_flip() +
-    labs(title="FIO searches, January-September 2019",
-         subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender",
-         caption = attribution)+
-  xlab("")+
-  ylab("number of stops")+
-    facet_grid(sex~race)
-
 p<-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
   filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
   filter(race=="Black" | race=="White") %>%
@@ -217,9 +207,12 @@ frisk<-p %>% ggplot(fio, mapping = aes(basis,fill=frisked,position="stacked")) +
   coord_flip()+
   xlab("")+
   ylab("number of stops")+
+  labs(caption=attribution)+
   facet_grid(sex~race)
 
 gridExtra::grid.arrange(search,frisk)
+
+p %>% ggplot
 
 #
 
