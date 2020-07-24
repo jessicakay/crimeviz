@@ -150,14 +150,17 @@ details<-round(prop.table(table(fio$race,fio$sex)),2)
 black_f<-details[14]
 black_m<-details[15]
 
+
+fio<-read.csv("~/../Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
+
 table(fio$frisked,fio$race,fio$sex)
-fio$frisked<-factor(fio$frisked,levels = rev(levels(fio$fri)))
 
-fio$frisked<-factor(fio$frisked,levels = rev(levels(fio$fri)))
 
-c_lev<-c("","Y")
-c_ord<-c("Y","")
-fio$frisked[order(match(c_lev,c_ord))]
+fio$frisked<-as.factor(fio$frisked)
+fio$searchperson<-as.factor(fio$searchperson)
+levels(fio$frisked)
+levels(fio$searchperson)
+
 
 table(
   fio %>%
@@ -165,10 +168,6 @@ table(
         filter(race=="Black" | race=="White") %>%
         select(frisked,sex,race,basis)
       )
-
-# note: this analysis is looking specifically at the role 
-# anti-Blackness has in policing in Boston; this is not 
-# a comprehensive breakdown of race/ethnicity
 
 
 p<-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
@@ -191,6 +190,13 @@ p<-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
       sex == "Transgender Female to Male" ~ "Male",
       sex == "Female" ~ "Female",
       sex == "Transgender Male to Female" ~ "Female"))
+
+levels(fio$searchperson)
+
+# note: this analysis is looking specifically at the role 
+# anti-Blackness has in policing in Boston; this is not 
+# a comprehensive breakdown of race/ethnicity
+
 
 search<-p %>% ggplot(fio, mapping = aes(basis,fill=searchperson,position="stacked")) +
   geom_bar() +
