@@ -214,7 +214,7 @@ search<-p %>% ggplot(fio, mapping = aes(basis,fill=searchperson,position="stacke
 
 frisk<-p %>% ggplot(fio, mapping = aes(basis,fill=frisked,position="stacked")) +
   geom_bar() +
-  coord_flip() +
+  coord_flip()+
   xlab("")+
   ylab("number of stops")+
   facet_grid(sex~race)
