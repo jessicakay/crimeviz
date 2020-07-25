@@ -218,8 +218,7 @@ search<-p %>% ggplot(fio, mapping = aes(basis,fill=searchperson,position="stacke
   geom_bar() +
   coord_flip() +
   labs(title="FIO searches, January-September 2019",
-       subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender",
-       caption = black_num_searchd)+
+       subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender")+
   xlab("")+
   ylab("number of stops")+
   scale_fill_manual(name="searched",values = c("darkgray","firebrick"))+
@@ -228,10 +227,9 @@ search<-p %>% ggplot(fio, mapping = aes(basis,fill=searchperson,position="stacke
 frisk<-p %>% ggplot(fio, mapping = aes(basis,fill=frisked,position="stacked")) +
   geom_bar() +
   coord_flip()+
-  labs(caption = black_num_frisked)+
   xlab("")+
   ylab("number of stops")+
-  scale_fill_manual(values = c("darkgray","firebrick","firebrick"))+
+  scale_fill_manual(values = c("darkgray","firebrick"))+
   labs(caption=attribution)+
   facet_grid(sex~race)
 
@@ -239,6 +237,39 @@ png(filename="~/../Documents/Github/crimeviz/plots/bias_redgrey.png", width= 800
 gridExtra::grid.arrange(search,frisk)
 dev.off()
 
+# vehicle search, summons issued
+searchvehicle<-p %>% 
+  mutate(searchvehicle=case_when(
+    searchvehicle=="" ~ "No",
+    searchvehicle=="Y" ~"Yes")
+    ) %>%
+  ggplot(fio, mapping = aes(basis,fill=searchvehicle,position="stacked")) +
+  geom_bar() +
+  coord_flip()+
+  xlab("")+
+  ylab("number of stops")+
+  labs(title="FIO searches, January-September 2019",
+       subtitle = "Role Of Anti-Black Bias in \"community policing\", breakdown by gender")+
+  scale_fill_manual(name="car search",values = c("darkgray","firebrick"))+
+  facet_grid(sex~race)
+
+summons<-p %>% 
+  mutate(summonsissued=case_when(
+    summonsissued=="" ~ "No",
+    summonsissued=="Y" ~"Yes")
+    ) %>%
+  ggplot(fio, mapping = aes(basis,fill=summonsissued,position="stacked")) +
+  geom_bar() +
+  coord_flip()+
+  xlab("")+
+  ylab("number of stops")+
+  scale_fill_manual(name="summons",values = c("darkgray","firebrick"))+
+  labs(caption=attribution)+
+  facet_grid(sex~race)
+
+png(filename="~/../Documents/Github/crimeviz/plots/summons_redgrey.png", width= 800, height=800)
+gridExtra::grid.arrange(searchvehicle,summons)
+dev.off()
 
 
 #
