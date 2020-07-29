@@ -34,3 +34,8 @@ View(table(p$basis,p$race,p$frisked,p$sex))
 View(round(prop.table(table(p$basis,p$race,p$frisked,p$sex),margin=1),2))
 
 View(round(prop.table(table(p$basis,p$race,p$searchperson,p$sex),margin=1),2))
+View(round(prop.table(table(p$basis,p$race,p$searchvehicle,p$sex),margin=1),2))
+View(round(prop.table(table(p$basis,p$race,p$summonsissued,p$sex),margin=1),2))
+
+write.table(sqldf::sqldf('select distinct(race) from fio'),"clipboard",sep="\t")
+
