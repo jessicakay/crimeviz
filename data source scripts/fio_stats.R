@@ -320,3 +320,4 @@ wordcloud(text)
 table(fio$race)
 
 as.list(text)
+
