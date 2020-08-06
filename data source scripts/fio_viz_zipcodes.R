@@ -8,7 +8,9 @@ install.packages("yarrr")
 attribution <- "github.com/jessicakay/crimeviz"
 fio<-read.csv("~/../Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
 
-install.packages(cur)
+if(Sys.getenv("DESKTOP_SESSION")=="ubuntu"){
+  fio<-read.csv(url("https://github.com/jackiejahn/boston-FIO-2019/blob/master/rms_fio_2019.csv",stringsAsFactors = FALSE))
+}
 
 fio$zip<-stringr::str_extract(fio$zip,"[[:digit:]]+")
 
