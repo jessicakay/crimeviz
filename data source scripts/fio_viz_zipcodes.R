@@ -8,6 +8,8 @@ install.packages("yarrr")
 attribution <- "github.com/jessicakay/crimeviz"
 fio<-read.csv("~/../Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
 
+install.packages(cur)
+
 fio$zip<-stringr::str_extract(fio$zip,"[[:digit:]]+")
 
 
@@ -58,7 +60,7 @@ fio %>% select(zip, race) %>%
   geom_bar(aes(y=zip,fill=race))+
   scale_color_manual(values=as.vector(piratepal("usualsuspects")))+
   labs(title = "Breakdown of FIO stops by zip code")
-<<<<<<< HEAD
+
   
   
   fio %>% select(zip, race) %>%
@@ -91,7 +93,3 @@ fio %>% select(zip, race) %>%
 
   fio %>% filter (race=="Black") %>% select
   
-  
-=======
-
->>>>>>> 01810bd703f2bbf0f88861464fe0a9e255ed62c2

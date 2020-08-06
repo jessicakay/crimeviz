@@ -8,3 +8,4 @@ d<-details %>%
   group_by(employee_name)
 
 distinct(details,employee_name)
+
