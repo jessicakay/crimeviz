@@ -6,17 +6,16 @@ library(tidyverse)
 install.packages("yarrr")
 
 attribution <- "github.com/jessicakay/crimeviz"
+jset <- "https://raw.githubusercontent.com/jackiejahn/boston-FIO-2019/master/rms_fio_2019.csv"
+
 fio<-read.csv("~/../Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
 
 if(Sys.getenv("DESKTOP_SESSION")=="ubuntu"){
-  fio<-read.csv(url("https://github.com/jackiejahn/boston-FIO-2019/blob/master/rms_fio_2019.csv",stringsAsFactors = FALSE))
+  fio<-read.csv(jset,stringsAsFactors = FALSE)
 }
 
 fio$zip<-stringr::str_extract(fio$zip,"[[:digit:]]+")
 
-
-install.packages("wesanderson")
-library(wesanderson)
 
 pal <- c("gray51","firebrick","gray63","gray69","gray76","gray82","gray88")
 
@@ -54,6 +53,7 @@ fio %>% select(zip, race) %>%
 
 
 
+library(wesanderson)
 
 fio %>% select(zip, race) %>%
   filter(is.na(zip) == FALSE && race != "") %>%
