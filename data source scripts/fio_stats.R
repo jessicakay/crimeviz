@@ -209,8 +209,6 @@ black_num_searchd<-paste(j[26]," ( ",k[30]*100,"% )",sep="")
 # anti-Blackness has in policing in Boston; this is not 
 # a comprehensive breakdown of race/ethnicity
 
-
-
 search<-p %>% ggplot(fio, mapping = aes(basis,fill=searchperson,position="stacked")) +
   geom_bar() +
   coord_flip() +
@@ -268,7 +266,6 @@ png(filename="~/../Documents/Github/crimeviz/plots/summons_redgrey.png", width= 
 gridExtra::grid.arrange(searchvehicle,summons)
 dev.off()
 
-
 #
 
 fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
@@ -286,6 +283,7 @@ table(fio$contact_officer_name,fio$frisked,fio$race)
 # support for multi-select lists such as "select all that apply" fields. 
 
 getVals <- function(target, d) {
+  target<-as.character(target)
   new_df <- unlist(strsplit(target, ","))
   new_df <- as.data.frame(trimws(new_df))
   if (d == 1) {
@@ -295,9 +293,6 @@ getVals <- function(target, d) {
   new_df <<- str_squish(new_df$keywords)
   head(new_df)
 }
-
-
-
 
 # qualitative analysis
 
