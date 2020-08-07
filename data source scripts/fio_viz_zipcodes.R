@@ -30,3 +30,4 @@ fio %>% select(zip, race) %>%
   geom_point(aes(y=zip,x=n,color=race))+
   scale_fill_manual(values = pal) +
   labs(title = "Breakdown of FIO stops by zip code")
+
