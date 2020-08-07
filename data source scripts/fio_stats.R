@@ -27,15 +27,6 @@ fio$num[is.na(fio$num)]<-""
 fio$txt<-str_extract(fio$streetaddr, "[[:alpha:][:space:]&]+")
 
 
-# function to pull distinct values from vectors, includes 
-# support for multi-select lists such as "select all that apply" fields. 
-
-getVals<-function(target){
-  new_df<<-unlist(strsplit(target,","))
-  new_df<<-as.data.frame(trimws(new_df))
-  new_df<<-distinct(new_df)
-  colnames(new_df)[1]<<-"keywords"
-}
 
 fio<-read.csv("~/../Desktop/mark43_fio_2019.csv") # obs from dates 9/29/19 - 12/31/19
 fio<-read.csv("~/../Desktop/rms_fio_2019.csv") # obs 1/1/2019 - 9/29/2019
@@ -68,6 +59,12 @@ dev.off()
 # import Jackie's cleaned dataset
 
 fio<-read.csv("~/../Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
+
+if(Sys.getenv("DESKTOP_SESSION")=="ubuntu"){
+  fio<-read.csv("https://raw.githubusercontent.com/jackiejahn/boston-FIO-2019/master/rms_fio_2019.csv",
+                stringsAsFactors = FALSE)
+}
+
 
 fio$stop_duration <- factor(
   fio$stop_duration,
@@ -284,6 +281,22 @@ fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
 
 
 table(fio$contact_officer_name,fio$frisked,fio$race)
+
+# function to pull distinct values from vectors, includes 
+# support for multi-select lists such as "select all that apply" fields. 
+
+getVals <- function(target, d) {
+  new_df <- unlist(strsplit(target, ","))
+  new_df <- as.data.frame(trimws(new_df))
+  if (d == 1) {
+    new_df <- distinct(new_df)
+  }
+  colnames(new_df)[1] <- "keywords"
+  new_df <<- str_squish(new_df$keywords)
+  head(new_df)
+}
+
+
 
 
 # qualitative analysis
