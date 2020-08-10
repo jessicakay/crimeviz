@@ -3,7 +3,6 @@
 
 library(stringr)
 library(tidyverse)
-install.packages("yarrr")
 
 attribution <- "github.com/jessicakay/crimeviz"
 jset <- "https://raw.githubusercontent.com/jackiejahn/boston-FIO-2019/master/rms_fio_2019.csv"
@@ -41,57 +40,72 @@ fio %>% select(zip, race) %>%
         legend.title = element_blank(),
         legend.background = element_rect(linetype = 1,colour = "gray"))
 
-###
+  
 
-fio %>% select(zip, race) %>%
-  filter(is.na(zip) == FALSE & race != "") %>%
-  ggplot() +
-  geom_bar(aes(y=zip,fill=race))+
-  scale_fill_manual(values = pal) +
-  labs(title = "Breakdown of FIO stops by zip code")+
-  theme_minimal()
+# zip code breakdown from http://www.bostonplans.org/getattachment/8d4b1dc5-ce11-45b4-9bf5-370444b49b68
+# courtesy of Nathan Story
 
-
-
-library(wesanderson)
-
-fio %>% select(zip, race) %>%
-  filter(is.na(zip) == FALSE && race != "") %>%
-  group_by(zip,race) %>%
-  ggplot()+
-  geom_bar(aes(y=zip,fill=race))+
-  scale_color_manual(values=as.vector(piratepal("usualsuspects")))+
-  labs(title = "Breakdown of FIO stops by zip code")
-
+  allston<-c("02134", "02135",
+             "02163")
+  backbay<-c("02108", "02116", 
+             "02117", "02199", 
+             "02217", "02133")
+  central<-c("02109", "02110", 
+             "02111", "02112", 
+             "02113", "02114", 
+             "02196", "02201", 
+             "02203", "02205", 
+             "02211", "02212", 
+             "02222", "02241", 
+             "02283", "02297")
+  drchstr<-c("02122", "02124", 
+             "02125")
+  eastbos<-c("02128","02228")
+  fenwayk<-c("02115","02215", 
+             "02123")
+  hydeprk<-c("02136","02137")
+  roxbury<-c("02119", "02120", 
+             "02121")
+  sothbos<-c("02127","02210")
   
   
-  fio %>% select(zip, race) %>%
-    filter(is.na(zip) == FALSE && race != "") %>%
-    group_by(zip, race) %>%
-    summarize(n = n()) %>%
+  fio <- fio %>% mutate(
+    neighborhood = case_when(
+      zip %in% allston ~ "Allston",
+      zip %in% backbay ~ "Backbay",
+      zip == "02130" ~ "Jamaica Plain",
+      zip == "02126" ~ "Mattapan",
+      zip == "02131" ~ "Roslindale",
+      zip == "02129" ~ "Charlestown",
+      zip == "02132" ~ "West Roxbury",
+      zip == "02118" ~ "South End",
+      zip %in% central ~ "Central Boston",
+      zip %in% drchstr ~ "Dorchester",
+      zip %in% eastbos ~ "East Boston",
+      zip %in% fenwayk ~ "Fenway/Kenmore",
+      zip %in% hydeprk ~ "Hyde Park",
+      zip %in% roxbury ~ "Roxbury",
+      zip %in% sothbos ~ "South Boston"
+    )
+  )
+  
+  
+  ### convert zip to neighborhood
+  
+  png(filename="~/Documents/GitHub/crimeviz/plots/hist_plot_fio_stops.png", width= 600, height=1000)
+  
+  fio %>% select(neighborhood, race) %>%
+    filter(is.na(neighborhood) == FALSE & race != "") %>%
     ggplot() +
-    geom_bar(aes(y = zip, x = n, color = race)) +
-    scale_color_manual(values = as.vector(piratepal("usualsuspects"))) +
-    labs(title = "Breakdown of FIO stops by zip code")
-  
-
-  fio %>% select(zip, race) %>%
-    filter(is.na(zip) == FALSE & zip != "") %>%
-    filter(is.na(race) == FALSE & race != "") %>%
-    group_by(zip,race) %>%
-    summarize(n=n()) %>%
-    ggplot()+
-    geom_point(aes(y=zip,x=n,color=race))+
-  scale_color_manual(values=as.vector(piratepal("usualsuspects")))+
-    labs(title = "Breakdown of FIO stops by zip code")
+    geom_bar(aes(y=neighborhood,fill=race), position = position_stack())+
+    scale_fill_manual(values = pal) +
+    labs(title = "Breakdown of FIO stops by zip code",
+         subtitle="stops grouped by zip code, neighborhood",
+         caption = attribution)+
+    theme_minimal()+
+    xlab("")+
+    ylab("")+
+    theme(legend.position = "bottom")
   
   
-  fio %>% select(zip, race) %>%
-    filter(is.na(zip) == FALSE & race != "") %>%
-    group_by(zip,race) %>%
-    summarize(count=n())%>%
-    group_by(race)%>%
-    mutate(m=mean(count))
-
-  fio %>% filter (race=="Black") %>% select
   
