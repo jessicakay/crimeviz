@@ -89,7 +89,6 @@ fio %>% select(zip, race) %>%
     )
   )
   
-  
   ### convert zip to neighborhood
   
   png(filename="~/Documents/GitHub/crimeviz/plots/hist_plot_fio_stops.png", width= 600, height=1000)
