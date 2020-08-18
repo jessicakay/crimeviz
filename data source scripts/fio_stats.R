@@ -294,6 +294,19 @@ getVals <- function(target, d) {
   head(new_df)
 }
 
+getWords <- function(target, d) {
+  target<-as.character(target)
+  new_df <- unlist(strsplit(target, c(","," ")))
+  new_df <- as.data.frame(trimws(new_df))
+  if (d == 1) {
+    new_df <- distinct(new_df)
+  }
+  colnames(new_df)[1] <- "keywords"
+  new_df <<- str_squish(new_df$keywords)
+  head(new_df)
+}
+
+
 # qualitative analysis
 
 install.packages("wordcloud")
@@ -302,20 +315,33 @@ library(tidyverse)
 library(wordcloud)
 library(tm)
 
-text_source <- fio %>% 
-  select(race, sex, hair_style) 
-  
-text <- Corpus(VectorSource(text_source)) 
+
+getVals(fio$otherclothing,1)
+textmatrix<-as.matrix(new_df)
+text<-Corpus(VectorSource(new_df))  
+
+text <- Corpus(VectorSource(new_df)) 
 text <- text %>% 
   tm_map(removeNumbers) %>%
   tm_map(removePunctuation) %>%
   tm_map(stripWhitespace)
 
-wordcloud(text,scale = c(1,4))
+wordcloud(text)
 
 
 text_source <- fio %>% 
   select(contact_reason) 
+
+if(Sys.getenv("DESKTOP_SESSION")=="ubuntu"){
+  fio<-read.csv("https://raw.githubusercontent.com/jackiejahn/boston-FIO-2019/master/rms_fio_2019.csv",
+                stringsAsFactors = FALSE)
+}
+
+text_source <- fio %>% 
+ select(race, sex, hair_style)
+
+text_source<-as.vector(text_source)
+text_source<-gsub("\"","",text_source)
 text <- Corpus(VectorSource(text_source)) 
 text <- text %>% 
   tm_map(removeNumbers) %>%
