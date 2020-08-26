@@ -279,6 +279,10 @@ fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
 
 table(fio$contact_officer_name,fio$frisked,fio$race)
 
+# multiple y axes
+install.packages("latticeExtra")
+
+
 # function to pull distinct values from vectors, includes 
 # support for multi-select lists such as "select all that apply" fields. 
 
