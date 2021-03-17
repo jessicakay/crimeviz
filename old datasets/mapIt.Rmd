@@ -47,11 +47,12 @@ mapIt<-function(offCode,s){
   long_incl<-subset(target,target$Lat>"-71")
   makeMap<<-function(){
     ggplot(long_incl,aes(Long,Lat,color=YEAR))+geom_point(alpha=0.1)+
-      labs(title = "Crime in Boston", 
+      labs(title = "Incidents reported in Boston, Source: BPD", 
            subtitle=tolower(code_indx),
            caption=attribution)+
         geom_hline(yintercept = geo_zoom[1],colour="grey")+
-        geom_vline(xintercept = geo_zoom[2],colour="grey")
+        geom_vline(xintercept = geo_zoom[2],colour="grey")+
+      scale_color_distiller(palette = 1,direction = 1)
     
 }
   makeMap()
@@ -99,3 +100,56 @@ makeMap()
 ```
  
  
+```{r}
+
+bos_crime %>% group_by(INCIDENT_NUMBER) %>% mutate(count=n()) %>% select(INCIDENT_NUMBER,count, DISTRICT,OFFENSE_CODE) -> inc_num
+table(inc_num$count,inc_num$DISTRICT)
+
+  
+```
+
+The above table groups incidents by incident number and then by district. The y axis of the table denotes 
+the number of codes applied to a single incident. The original hypothesis for the repeat rows was that each 
+charge/offense code generated a new observation for the same event. Assuming that, we can group the data 
+further by both incident_number and offense_code. The results show a very uneven distribution. So what 
+does this actually show? These data (below) represent the number of entries where there is more than one 
+specific charge per incident. 
+
+
+
+```{r}
+
+inc_num %>% filter(count>19) %>% head()
+
+```
+
+
+
+
+```{r}
+bos_crime %>% group_by(INCIDENT_NUMBER,OFFENSE_CODE) %>% mutate(count=n()) %>% select(INCIDENT_NUMBER,count, DISTRICT,OFFENSE_CODE) -> inc_num
+table(inc_num$count,inc_num$DISTRICT)
+
+```
+```{r}
+
+round(prop.table(table(inc_num$count,inc_num$DISTRICT),margin=2)*100,2)
+
+```
+
+
+
+```{r}
+bos_crime %>% filter(INCIDENT_NUMBER=="I152071596") %>% head()
+
+```
+
+
+```{r}
+bos_crime %>% filter(OFFENSE_CODE_GROUP=="Medical Assistance") -> bos_crime
+
+mapIt(3001,0)
+makeMap()
+
+```
+
