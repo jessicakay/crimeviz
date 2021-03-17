@@ -146,10 +146,36 @@ bos_crime %>% filter(INCIDENT_NUMBER=="I152071596") %>% head()
 
 
 ```{r}
-bos_crime %>% filter(OFFENSE_CODE_GROUP=="Medical Assistance") -> bos_crime
 
-mapIt(3001,0)
-makeMap()
+table(inc_num$count,inc_num$DISTRICT) %>% as.data.frame() -> i_n
+
+names(i_n)[1]<-"diff_codes"
+names(i_n)[2]<-"district"
+
+i_n$over2<-ifelse(as.numeric(i_n$diff_codes)>6,1,0)
+i_n$over2<-factor(i_n$over2,levels=c(1,0),labels=c("over 2","2 or under"))
+
+
+i_n %>% 
+  filter(!is.na(district) & district!="" & district!="External") %>%
+  filter(Freq!=0) %>%
+  ggplot(aes(x=Freq,y=diff_codes,color=district))+
+  geom_point()+
+  ylab(label="number of rows per incident number")+
+  labs(title = "Distribution of multiple code application across district",
+       subtitle ="Source: BPD")
+
+i_n %>% 
+  filter(!is.na(district) & district!="" & district!="External") %>%
+  filter(Freq!=0) %>%
+  filter(as.numeric(diff_codes)>5) %>%
+  ggplot(aes(x=Freq,y=diff_codes,color=district))+
+  geom_point()+
+  ylab(label="number of rows per incident number")+
+  labs(title = "Distribution of multiple code application across district",
+       subtitle ="Source: BPD")
+
+
 
 ```
 
