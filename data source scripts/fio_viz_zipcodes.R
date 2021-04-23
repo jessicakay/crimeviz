@@ -14,7 +14,7 @@ if(Sys.getenv("DESKTOP_SESSION")=="ubuntu"){
 }
 
 fio$zip<-stringr::str_extract(fio$zip,"[[:digit:]]+")
-
+fio$zip<-paste("0",fio$zip,sep="")
 
 pal <- c("gray51","firebrick","gray63","gray69","gray76","gray82","gray88")
 
@@ -89,22 +89,119 @@ fio %>% select(zip, race) %>%
     )
   )
   
+  oldfio_data <- oldfio_data %>% mutate(
+    neighborhood = case_when(
+      zip %in% allston ~ "Allston",
+      zip %in% backbay ~ "Backbay",
+      zip == "02130" ~ "Jamaica Plain",
+      zip == "02126" ~ "Mattapan",
+      zip == "02131" ~ "Roslindale",
+      zip == "02129" ~ "Charlestown",
+      zip == "02132" ~ "West Roxbury",
+      zip == "02118" ~ "South End",
+      zip %in% central ~ "Central Boston",
+      zip %in% drchstr ~ "Dorchester",
+      zip %in% eastbos ~ "East Boston",
+      zip %in% fenwayk ~ "Fenway/Kenmore",
+      zip %in% hydeprk ~ "Hyde Park",
+      zip %in% roxbury ~ "Roxbury",
+      zip %in% sothbos ~ "South Boston"
+    )
+  )
+  
   ### convert zip to neighborhood
   
   png(filename="~/Documents/GitHub/crimeviz/plots/hist_plot_fio_stops.png", width= 600, height=1000)
   
-  fio %>% select(neighborhood, race) %>%
+
+  gridExtra::grid.arrange(
+    oldfio_data %>% 
+      select(neighborhood, race,contact_date.x) %>%
+      filter(is.na(neighborhood) == FALSE & race != "") %>%
+      mutate(mnth=lubridate::month(contact_date.x)) %>%
+      filter(mnth %in% c(1:8)) %>%
+      ggplot() +
+      geom_bar(aes(y=neighborhood,fill=race), position = position_stack())+
+      scale_fill_manual(values = pal) +
+      labs(title = "Breakdown of FIO stops by zip code, 2019",
+           subtitle="January - September",
+           caption = "")+
+      theme_minimal()+
+      xlab("")+
+      ylab("")+
+      xlim(... = c(0,3500))+
+      theme(axis.text.x = element_text(angle = 90))+
+      coord_flip()+
+      theme(legend.position = "bottom")
+
+    ,
+    
+  fio %>% select(neighborhood, race, contact_date.x) %>%
     filter(is.na(neighborhood) == FALSE & race != "") %>%
+    mutate(mnth=lubridate::month(contact_date.x)) %>%
+    filter(mnth %in% c(1:8)) %>%
     ggplot() +
     geom_bar(aes(y=neighborhood,fill=race), position = position_stack())+
     scale_fill_manual(values = pal) +
-    labs(title = "Breakdown of FIO stops by zip code",
-         subtitle="stops grouped by zip code, neighborhood",
+    labs(title = "Breakdown of FIO stops by zip code, 2020",
+         subtitle="January - September",
          caption = attribution)+
     theme_minimal()+
     xlab("")+
     ylab("")+
-    theme(legend.position = "bottom")
+    xlim(... = c(0,3500))+
+    coord_flip()+
+    theme(axis.text.x = element_text(angle = 90))+
+    theme(legend.position = "bottom"),
+  
+  fio %>% select(neighborhood, race, circumstance,contact_date.x,mnth) %>%
+    filter(is.na(neighborhood) == FALSE & race != "") %>%
+    ggplot() +
+    geom_bar(aes(y=neighborhood,fill=race), position = position_stack(),show.legend = FALSE)+
+    scale_fill_manual(values = pal) +
+    theme_minimal()+
+    xlab("")+
+    ylab("")+
+    xlim(... = c(0,500))+
+    coord_flip()+
+    theme(axis.text.y = element_blank(), axis.text.x = element_blank() )+
+    theme(legend.position = "bottom")+
+    facet_grid(.~mnth)
+  ,heights=c(2,0.5),widths=c(1,1))  
+  
+
   
   
+  
+    fio %>% select(neighborhood, race, circumstance,contact_date.x,mnth) %>%
+    filter(is.na(neighborhood) == FALSE & race != "") %>%
+    ggplot() +
+    geom_bar(aes(y=neighborhood,fill=race), position = position_stack(),show.legend = FALSE)+
+    scale_fill_manual(values = pal) +
+    labs(title = "Breakdown of FIO stops by zip code, 2020",
+         subtitle="stops grouped by zip code, neighborhood")+
+    theme_minimal()+
+    xlab("")+
+    ylab("")+
+    xlim(... = c(0,400))+
+    coord_flip()+
+    theme(axis.text.x = element_blank())+
+    theme(legend.position = "bottom")+
+    facet_grid(.~mnth)
+  
+  
+  
+  fio$mnth<-lubridate::month(fio$contact_date.x)
+  fio$mnth<-factor(fio$mnth,levels=c(1:12),labels=c("January","February","March",
+                                                      "April","May","June","July",
+                                                      "August","September","October",
+                                                      "November","December")) 
+    
+  oldfio_data$month<-lubridate::month(oldfio_data$contact_date.x)
+  oldfio_data$month<-factor(oldfio_data$month,levels=c(1:12),labels=c("January","February","March",
+                                                      "April","May","June","July",
+                                                      "August","September","October",
+                                                      "November","December")) 
+    
+
   

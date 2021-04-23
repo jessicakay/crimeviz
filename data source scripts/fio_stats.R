@@ -9,8 +9,18 @@ attribution <- "github.com/jessicakay/crimeviz"
 
 # FIO 
 
-fio_data<-read.csv("~/../Desktop/fieldcontacts_for_public_20192.csv",stringsAsFactors = FALSE)
-fio_name<-read.csv("~/../Desktop/fieldcontacts_name_for_public_2019.csv",stringsAsFactors = FALSE)
+oldfio_data<-read.csv("/Users/jessa/Downloads/old computer/Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
+oldfio_name<-read.csv("/Users/jessa/OneDrive/Desktop/mark43_fieldcontacts_for_public_2020_202104151551.csv",stringsAsFactors = FALSE)
+
+oldfio<- oldfio_data %>% inner_join(oldfio_name,by="fc_num")
+
+
+fio_data<-read.csv("/Users/jessa/OneDrive/Desktop/mark43_fieldcontacts_for_public_2020_202104151551.csv",stringsAsFactors = FALSE)
+fio_name<-read.csv("/Users/jessa/OneDrive/Desktop/mark43_fieldcontacts_name_for_public_2020_202104151551.csv",stringsAsFactors = FALSE)
+
+fio2019 <- read.csv(data2019,stringsAsFactors = FALSE)
+
+
 fio<- fio_data %>% inner_join(fio_name,by="fc_num")
 
 # clean data
@@ -186,7 +196,9 @@ p<-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
       sex == "Male" ~ "Male",
       sex == "Transgender Female to Male" ~ "Male",
       sex == "Female" ~ "Female",
-      sex == "Transgender Male to Female" ~ "Female")) 
+      sex == "Transgender Male to Female" ~ "Female"))
+
+
 
 levels(fio$searchperson)
 
@@ -359,3 +371,42 @@ table(fio$race)
 
 as.list(text)
 
+
+
+
+p<-fio %>% filter(basis!="Unknown" & basis!="NULL" & is.null(basis)==FALSE) %>%
+  filter(race!="Unknown" & race!="NULL" & is.null(race)==FALSE) %>%
+  filter(race=="Black" | race=="White") %>%
+  filter(sex!="NA" & is.na(sex)==FALSE & is.null(sex)==FALSE & 
+           is_empty(sex)==FALSE & sex!="") %>%
+  filter(sex=="Male" | sex=="Female") %>%
+  mutate(
+    frisk.search=case_when(
+      frisk.search=="" ~ "Not frisked",
+      frisk.search=="Y" ~ "Frisked"))%>%
+  mutate(frisk.search=factor(frisk.search,levels=c("Not frisked","Frisked")))%>%
+  mutate(
+    sex = case_when(
+      sex == "Male" ~ "Male",
+      sex == "Transgender Female to Male" ~ "Male",
+      sex == "Female" ~ "Female",
+      sex == "Transgender Male to Female" ~ "Female"))
+
+
+
+
+p %>%
+  ggplot(fio, mapping = aes(basis,fill=frisk.search,position="stacked")) +
+  geom_bar(aes(x=frisk.search)) +
+  coord_flip()+
+  xlab("")+
+  ylab("number of stops")+
+  scale_fill_manual(name="summons",values = c("darkgray","firebrick"))+
+  labs(caption=attribution)+
+  facet_grid(sex~race)
+
+
+f <- fio %>% filter(race=="Black" | race=="White")
+prop.table(table(f$frisk.search,f$race),margin=2)
+
+table(fio$race)
