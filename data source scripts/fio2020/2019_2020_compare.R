@@ -27,7 +27,7 @@ boston<-c("BOSTON","BSTN","BTSN","BSNT","BSTNA","BSTON","boston","Boston")
 fio$city[fio$city %in% dorchester]<-"DORCHESTER"
 fio$city[fio$city %in% boston]<-"BOSTON"
 
-# zip codes from Nathan Story @ wokewindows.org
+# zip codes from Nathan Story @ wokewindows.org (not census), arrays/grouping by JK
 
 allston<-c("02134", "02135",
            "02163")
