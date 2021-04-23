@@ -27,6 +27,8 @@ boston<-c("BOSTON","BSTN","BTSN","BSNT","BSTNA","BSTON","boston","Boston")
 fio$city[fio$city %in% dorchester]<-"DORCHESTER"
 fio$city[fio$city %in% boston]<-"BOSTON"
 
+# zip codes from Nathan Story @ wokewindows.org
+
 allston<-c("02134", "02135",
            "02163")
 backbay<-c("02108", "02116", 
@@ -91,9 +93,13 @@ oldfio_data <- oldfio_data %>% mutate(
 )
 
 
-pal <- c("gray51","firebrick","gray63","gray69","gray76","gray82","gray88")
 
+  # palette to highlight anti-black bias in BPD
+  
+  pal <- c("gray51","firebrick","gray63","gray69","gray76","gray82","gray88")
 
+# factor months before piping into tidy
+  
 fio$mnth<-lubridate::month(fio$contact_date.x)
 fio$mnth<-factor(fio$mnth,levels=c(1:12),labels=c("January","February","March",
                                                   "April","May","June","July",
@@ -105,7 +111,9 @@ oldfio_data$mnth<-factor(oldfio_data$mnth,levels=c(1:12),labels=c("January","Feb
                                                                     "April","May","June","July",
                                                                     "August","September","October",
                                                                     "November","December")) 
-  oldfio_data %>% 
+# build individual plots
+
+oldfio_data %>% 
     select(neighborhood, race,contact_date.x) %>%
     filter(is.na(neighborhood) == FALSE & race != "") %>%
     mutate(mnth=lubridate::month(contact_date.x)) %>%
@@ -176,6 +184,7 @@ oldfio_data$mnth<-factor(oldfio_data$mnth,levels=c(1:12),labels=c("January","Feb
     theme(legend.position = "bottom")+
     facet_grid(.~mnth) -> plot_d
 
+  # make it big
   
   png(filename = "fio2019v2020_plot.png",height = 1800,width = 2000)
       a_b <- gridExtra::grid.arrange(plot_a,plot_b,ncol=2)
