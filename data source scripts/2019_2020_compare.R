@@ -177,8 +177,9 @@ oldfio_data$mnth<-factor(oldfio_data$mnth,levels=c(1:12),labels=c("January","Feb
     facet_grid(.~mnth) -> plot_d
 
   
-  a_b <- gridExtra::grid.arrange(plot_a,plot_b,ncol=2)
-  c_d <- gridExtra::grid.arrange(plot_c,plot_d,ncol=2)
-
-  grid.arrange(c_d,a_b,heights=c(1,2))
+  png(filename = "fio2019v2020_plot.png",height = 1800,width = 2000)
+      a_b <- gridExtra::grid.arrange(plot_a,plot_b,ncol=2)
+      c_d <- gridExtra::grid.arrange(plot_c,plot_d,ncol=2)
+      grid.arrange(c_d,a_b,heights=c(1,2))
+  dev.off()
   
