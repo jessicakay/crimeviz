@@ -11,16 +11,9 @@ attribution <- "github.com/jessicakay/crimeviz"
 
 oldfio_data<-read.csv("/Users/jessa/Downloads/old computer/Desktop/rms_fio_2019.csv",stringsAsFactors = FALSE)
 oldfio_name<-read.csv("/Users/jessa/OneDrive/Desktop/mark43_fieldcontacts_for_public_2020_202104151551.csv",stringsAsFactors = FALSE)
-
 oldfio<- oldfio_data %>% inner_join(oldfio_name,by="fc_num")
-
-
 fio_data<-read.csv("/Users/jessa/OneDrive/Desktop/mark43_fieldcontacts_for_public_2020_202104151551.csv",stringsAsFactors = FALSE)
 fio_name<-read.csv("/Users/jessa/OneDrive/Desktop/mark43_fieldcontacts_name_for_public_2020_202104151551.csv",stringsAsFactors = FALSE)
-
-fio2019 <- read.csv(data2019,stringsAsFactors = FALSE)
-
-
 fio<- fio_data %>% inner_join(fio_name,by="fc_num")
 
 # clean data
@@ -32,9 +25,6 @@ dorchester<-c("DDORCHESTER","DORCH","DORCHESTER","DORCHSTER","DORCCHESTER","DOR"
 boston<-c("BOSTON","BSTN","BTSN","BSNT","BSTNA","BSTON","boston","Boston")
 fio$city[fio$city %in% dorchester]<-"DORCHESTER"
 fio$city[fio$city %in% boston]<-"BOSTON"
-fio$num<-str_extract(fio$streetaddr, "[[:digit:]]+")
-fio$num[is.na(fio$num)]<-""
-fio$txt<-str_extract(fio$streetaddr, "[[:alpha:][:space:]&]+")
 
 
 
