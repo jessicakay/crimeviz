@@ -2,6 +2,7 @@ library(lubridate)
 library(tidyverse)
 library(stringr)
 library(sqldf)
+library(ggplot2)
 
 # jkant@bu.edu
 

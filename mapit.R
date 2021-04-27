@@ -2,8 +2,8 @@ library(tidyverse)
 
 # files 
         
-newest_data<-"~/../Downloads/tmpa5mvyouu.csv"
-code_list<-readxl::read_xlsx("~/../Desktop/rmsoffensecodes.xlsx")
+newest_data<-"/Users/jessa/Downloads/Downloads/tmpa5mvyouu.csv"
+code_list<-readxl::read_xlsx("/Users/jessa/Downloads/old computer/Desktop/rmsoffensecodes.xlsx")
 attribution<-"github.com/jessicakay"
 bos_crime<-read.csv(newest_data)
 
