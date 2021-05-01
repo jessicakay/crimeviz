@@ -75,7 +75,7 @@ mapIt<-function(offCode,s){
 # and uses lookup index to retrieve name. Includes optional 
 # argument to save to file where 0 = don't save,1 = save
 
-mapIt(801,1) 
+mapIt(801,0) 
 
 # add crosshair function below (in progress):
 

@@ -17,6 +17,17 @@ fio_data<-read.csv("/Users/jessa/OneDrive/Desktop/mark43_fieldcontacts_for_publi
 fio_name<-read.csv("/Users/jessa/OneDrive/Desktop/mark43_fieldcontacts_name_for_public_2020_202104151551.csv",stringsAsFactors = FALSE)
 fio<- fio_data %>% inner_join(fio_name,by="fc_num")
 
+
+fiod2017<-read.csv("/Users/jessa/OneDrive/Desktop/rms_fieldcontacts_for_public_2017_202003111424.csv",stringsAsFactors = FALSE)
+fiod2018<-read.csv("/Users/jessa/OneDrive/Desktop/rms_fieldcontacts_for_public_2018_202003111433.csv",stringsAsFactors = FALSE)
+fio_n2018<-read.csv("/Users/jessa/OneDrive/Desktop/rms_fieldcontacts_name_for_public_2017_202003111442.csv",stringsAsFactors = FALSE)
+fio_n2017<-read.csv("/Users/jessa/OneDrive/Desktop/rms_fieldcontacts_name_for_public_2018_202003111443.csv",stringsAsFactors = FALSE)
+
+fio2017 <- merge(fiod2017,fio_n2017,by="fc_num")
+fio2018 <- merge(fiod2018,fio_n2018,by="fc_num")
+
+
+
 # clean data
 
 fio$zip<-paste("0",fio$zip,sep="")
